@@ -5,10 +5,10 @@ A robust pipeline for deduplicating math questions and generating step-by-step r
 ## 🚀 Overview
 
 This pipeline processes a dataset of math questions and answers (`dataset.csv`) through the following stages:
+
 1. **Deduplication**: Identifies and removes duplicate questions using embedding similarity and LLM verification.
 2. **Reasoning Generation**: Generates detailed, step-by-step reasoning for each unique question.
 3. **Verification**: Validates the generated reasoning by extracting the final answer and comparing it with the ground truth.
-4. **Classification**: Separates results into correct and incorrect datasets based on verification.
 
 ## 🛠 Tech Stack
 
@@ -20,22 +20,29 @@ This pipeline processes a dataset of math questions and answers (`dataset.csv`) 
 ## ⚙️ Installation & Setup
 
 ### 1. Prerequisites
+
 Ensure you have `uv` installed. If not, you can install it via:
+
 ```bash
 curl -LsSf https://astral-sh.uv.re/install.sh | sh
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 uv sync
 ```
 
 ### 3. Environment Variables
+
 Create a `.env` file from the template and add your OpenAI API key:
+
 ```bash
 cp .env.template .env
 ```
+
 Edit `.env`:
+
 ```env
 OPENAI_API_KEY=your_openai_api_key_here
 ```
@@ -43,12 +50,14 @@ OPENAI_API_KEY=your_openai_api_key_here
 ## 📂 Data Formats
 
 ### Input: `dataset.csv`
-| Column | Description |
-|--------|-------------|
+
+| Column     | Description                         |
+| ---------- | ----------------------------------- |
 | `question` | The math problem statement (Korean) |
-| `answer` | The ground truth answer |
+| `answer`   | The ground truth answer             |
 
 ### Output Files
+
 1.  **`duplicates.csv`**: Questions identified as duplicates.
     - Columns: `question`, `duplicated_from`, `reason`
 2.  **`correct_dataset.csv`**: Questions where the LLM's reasoning led to the correct answer.
@@ -59,6 +68,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ## 🏃 Usage
 
 To run the entire pipeline:
+
 ```bash
 uv run main.py
 ```
@@ -82,6 +92,12 @@ uv run main.py
 
 ## 🔍 Pipeline Details
 
-- **Embedding-based Deduplication**: Uses `text-embedding-3-small` to calculate cosine similarity. Pairs with similarity > 0.9 are double-checked by an LLM to ensure they are true duplicates (e.g., phrasing variations).
-- **Korean Optimization**: All prompts and generated reasoning are optimized for the Korean language.
-- **Verification Logic**: The pipeline uses an LLM-based verification step to extract the final answer from the generated reasoning before comparing it to the label.
+1. **Preprocessing**: Questions are canonicalized to reduce superficial differences
+2. **Embedding Generation**: Embedding vectors are generated for each question.
+3. **Duplicate Detection**: Detect duplicated questions.
+   - Pairs with cosine similarity > 0.9 are flagged as potential duplicates.
+   - LLM verification is used to confirm if they are true duplicates (e.g., different phrasing of the same question).
+4. **Reasoning Generation**: For each unique question, the LLM generates a step-by-step reasoning process.
+   - Answers are not given to the LLM, so that it must derive the answer through reasoning.
+5. **Verification**: The final answer is extracted from the generated reasoning and compared to the ground truth answer. The results are categorized into correct and incorrect datasets.
+   - In actuall implementation, you can probably make LLM retry the **reasoning generation** if the answer is incorrect, up to a certain number of attempts. For this assignment, we will just categorize it as incorrect without retrying.

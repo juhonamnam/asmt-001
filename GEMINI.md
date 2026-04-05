@@ -44,7 +44,6 @@ question,answer
 
 The pipeline generates:
 
-
 - `duplicates.csv` containing duplicated questions with the following columns:
   | column | name |
   |--------|-----------|
@@ -94,4 +93,4 @@ The pipeline generates:
    - If similarity > 0.9, use LLM to determine if questions are actually duplicates.
 5. **Reasoning Generation**: For each unique question, generate step-by-step reasoning using the LLM.
 6. **Answer Verification**: Verify the generated answer against the ground truth answer.
-7. **Output Dataset**: Save the results to `output_dataset.csv`.
+7. **Output Dataset**: Save the results into `duplicates.csv`, `correct_dataset.csv`, and `incorrect_dataset.csv`.
