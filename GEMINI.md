@@ -88,9 +88,9 @@ The pipeline generates:
 
 1. **Load Dataset**: Read `dataset.csv` into a DataFrame.
 2. **Preprocess Dataset**: Canonicalize questions. (Rule based + LLM based)
-3. **Embedding Generation**: Generate embeddings for question/answer pairs using OpenAI API.
-4. **Deduplication**: Remove duplicate questions based on cosine similarity of embeddings.
+3. **Deduplication**: Remove duplicate questions based on cosine similarity of embeddings.
+   - Generate embeddings for each question using embedding model.
    - If similarity > 0.9, use LLM to determine if questions are actually duplicates.
-5. **Reasoning Generation**: For each unique question, generate step-by-step reasoning using the LLM.
-6. **Answer Verification**: Verify the generated answer against the ground truth answer.
-7. **Output Dataset**: Save the results into `duplicates.csv`, `correct_dataset.csv`, and `incorrect_dataset.csv`.
+4. **Reasoning Generation**: For each unique question, generate step-by-step reasoning using the LLM.
+5. **Answer Verification**: Verify the generated answer against the ground truth answer.
+6. **Output Dataset**: Save the results into `duplicates.csv`, `correct_dataset.csv`, and `incorrect_dataset.csv`.

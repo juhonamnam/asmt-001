@@ -93,11 +93,11 @@ uv run main.py
 ## 🔍 Pipeline Details
 
 1. **Preprocessing**: Questions are canonicalized to reduce superficial differences
-2. **Embedding Generation**: Embedding vectors are generated for each question.
-3. **Duplicate Detection**: Detect duplicated questions.
+2. **Duplicate Detection**: Detect duplicated questions.
+   - Generate embeddings for each question using embedding model.
    - Pairs with cosine similarity > 0.9 are flagged as potential duplicates.
    - LLM verification is used to confirm if they are true duplicates (e.g., different phrasing of the same question).
-4. **Reasoning Generation**: For each unique question, the LLM generates a step-by-step reasoning process.
+3. **Reasoning Generation**: For each unique question, the LLM generates a step-by-step reasoning process.
    - Answers are not given to the LLM, so that it must derive the answer through reasoning.
-5. **Verification**: The final answer is extracted from the generated reasoning and compared to the ground truth answer. The results are categorized into correct and incorrect datasets.
+4. **Verification**: The final answer is extracted from the generated reasoning and compared to the ground truth answer. The results are categorized into correct and incorrect datasets.
    - In actuall implementation, you can probably make LLM retry the **reasoning generation** if the answer is incorrect, up to a certain number of attempts. For this assignment, we will just categorize it as incorrect without retrying.
