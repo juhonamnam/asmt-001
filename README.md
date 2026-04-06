@@ -97,6 +97,7 @@ uv run main.py
    - Generate embeddings for each question using embedding model.
    - Pairs with cosine similarity > 0.9 are flagged as potential duplicates.
    - LLM verification is used to confirm if they are true duplicates (e.g., different phrasing of the same question).
+   - In actuall service, you might want to use Vector DB for efficient similarity search. For this assignment, we will just do pairwise similarity check.
 3. **Reasoning Generation**: For each unique question, the LLM generates a step-by-step reasoning process.
    - Answers are not given to the LLM, so that it must derive the answer through reasoning.
 4. **Verification**: The final answer is extracted from the generated reasoning and compared to the ground truth answer. The results are categorized into correct and incorrect datasets.

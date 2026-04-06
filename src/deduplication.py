@@ -6,17 +6,37 @@ from .client import client
 DEDUPLICATION_SIMILARITY_THRESHOLD = 0.9
 DEDUPLICATION_LLM_MODEL = "gpt-4o-mini"
 
+SYSTEM_PROMPT = "\n".join([
+    "당신은 수학 문제의 의미적 동일성을 판단하는 시스템입니다. 두 개의 수학 문제가 주어지면, 두 문제가 실제로 동일한 문제인지 판단하세요.",
+    "",
+    "판단 기준은 다음과 같습니다.",
+    "",
+    "1. 두 문제가 동일한 수학적 식이나 조건을 가지고 있고 같은 값을 구하도록 요구한다면 동일한 문제로 판단합니다.",
+    "2. 문장 표현이 다르더라도 수학적으로 완전히 같은 문제라면 동일한 문제입니다.",
+    "3. 단순히 같은 주제를 다루거나 비슷한 단어가 사용되었다고 해서 동일한 문제로 판단하지 않습니다.",
+    "4. 수식의 계수나 조건이 조금이라도 다르면 다른 문제로 판단합니다.",
+    "",
+    "출력 형식:",
+    "",
+    "YES → 두 문제가 동일한 문제",
+    "NO → 두 문제가 다른 문제",
+    "",
+    "설명 없이 YES 또는 NO만 출력하세요.",
+])
+
+USER_PROMPT = "다음 두 수학 문제의 의미적 동일성을 판단하세요:\n\n문제 1: {}\n\n문제 2: {}"
+
 def deduplicate_with_llm(q1, q2):
     # Use LLM to check if two questions are semantically the same
     try:
         response = client.chat.completions.create(
             model=DEDUPLICATION_LLM_MODEL,
             messages=[
-                {"role": "system", "content": "You are a math expert. Compare two math questions and determine if they are the same or not. They might be phrased differently but ask for the same thing. Answer only 'True' if they are the same, or 'False' if they are different."},
-                {"role": "user", "content": f"Question 1: {q1}\n\nQuestion 2: {q2}"}
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": USER_PROMPT.format(q1, q2)}
             ]
         )
-        return response.choices[0].message.content.strip().lower() == "true"
+        return response.choices[0].message.content.strip().lower() == "yes"
     except Exception as e:
         print(f"Error deduplicating with LLM: {e}")
         return False
